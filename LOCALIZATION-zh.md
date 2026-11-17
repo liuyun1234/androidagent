@@ -1,5 +1,7 @@
 # 中文本地化分支（未经验证）
 
+> 本分支的全部改动、构建与发布操作由 **LongCat-2.5**（androidagent 内置代理）在手机上自主完成。
+
 本分支基于上游 `mateuszsury/androidagent` 0.5.0（versionCode 500），做两件事：
 
 1. **界面汉化**：把应用界面从波兰语全部改为中文（Java 界面文本、`strings.xml`、内置终端脚本 `buddy-run`、系统提示与技能文档）。
