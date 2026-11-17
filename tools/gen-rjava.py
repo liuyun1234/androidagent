@@ -5,6 +5,9 @@ import subprocess
 import sys
 
 apk, out = sys.argv[1], sys.argv[2]
+badging = subprocess.run(["aapt2", "dump", "badging", apk], capture_output=True, text=True,
+                         check=True).stdout
+package = re.search(r"package: name='([^']+)'", badging).group(1)
 text = subprocess.run(["aapt2", "dump", "resources", apk], capture_output=True, text=True,
                       check=True).stdout
 ids, order, current = {}, [], None
@@ -20,7 +23,7 @@ for line in text.splitlines():
         value, kind, name = int(match.group(1), 16), match.group(2), match.group(3).replace(".", "_")
         ids.setdefault((kind, name), value)
 
-lines = ["package dev.mateuszsury.androidagent;", "", "public final class R {"]
+lines = ["package %s;" % package, "", "public final class R {"]
 for kind in order:
     lines.append("    public static final class %s {" % kind)
     for (k, name), value in ids.items():

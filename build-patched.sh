@@ -5,11 +5,12 @@ set -euo pipefail
 cd "$(dirname "$0")"
 SDK_JAR=${SDK_JAR:-$HOME/android-sdk/android-36/android.jar}
 KEYSTORE=${KEYSTORE:-$HOME/.buddy-keys/release.jks}
-PACKAGE=dev.mateuszsury.androidagent
+PACKAGE=${PACKAGE:-dev.mateuszsury.androidagent}
+SOURCE_PACKAGE=${SOURCE_PACKAGE:-dev.mateuszsury.androidagent}
 SRC=app/src/main
-OUT=$PWD/build-patched5
-APK=$(pm path "$PACKAGE" | sed 's/^package://' | head -1)
-[ -f "$APK" ] || { echo "未找到已安装的 $PACKAGE APK" >&2; exit 1; }
+OUT=${OUT:-$PWD/build-patched8}
+APK=$(pm path "$SOURCE_PACKAGE" | sed 's/^package://' | head -1)
+[ -f "$APK" ] || { echo "未找到已安装的 $SOURCE_PACKAGE APK" >&2; exit 1; }
 rm -rf "$OUT"; mkdir -p "$OUT/gen" "$OUT/classes" "$OUT/dex" "$OUT/newres"
 
 echo "1/7 编译资源"
@@ -29,11 +30,11 @@ d8 --release --min-api 30 --lib "$SDK_JAR" --output "$OUT/dex" $(find "$OUT/clas
 
 echo "4/7 合并已安装 APK 的资源"
 cp "$APK" "$OUT/merged.apk"
-zip -q -d "$OUT/merged.apk" 'res/*' 'AndroidManifest.xml' 'resources.arsc' 'classes.dex' \
+zip -q -d "$OUT/merged.apk" 'res/*' 'res' 'AndroidManifest.xml' 'resources.arsc' 'classes.dex' \
   'termux/*' 'META-INF/*.SF' 'META-INF/*.RSA' 'META-INF/*.DSA' 'META-INF/*.EC' 'META-INF/*.MF' >/dev/null 2>&1 || true
 (cd "$OUT/newres" && unzip -q -o "$OUT/base.apk" 'AndroidManifest.xml' 'resources.arsc' 'res/*')
 (cd "$OUT/newres" && zip -q -X -0 "$OUT/merged.apk" resources.arsc)
-(cd "$OUT/newres" && zip -q -X "$OUT/merged.apk" AndroidManifest.xml res/*)
+(cd "$OUT/newres" && zip -q -rX "$OUT/merged.apk" AndroidManifest.xml res)
 (cd "$OUT/dex" && zip -q -X "$OUT/merged.apk" classes.dex)
 mkdir -p "$OUT/pkgassets/assets"
 cp -r termux "$OUT/pkgassets/assets/"
