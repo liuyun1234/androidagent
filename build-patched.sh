@@ -32,7 +32,8 @@ cp "$APK" "$OUT/merged.apk"
 zip -q -d "$OUT/merged.apk" 'res/*' 'AndroidManifest.xml' 'resources.arsc' 'classes.dex' \
   'termux/*' 'META-INF/*.SF' 'META-INF/*.RSA' 'META-INF/*.DSA' 'META-INF/*.EC' 'META-INF/*.MF' >/dev/null 2>&1 || true
 (cd "$OUT/newres" && unzip -q -o "$OUT/base.apk" 'AndroidManifest.xml' 'resources.arsc' 'res/*')
-(cd "$OUT/newres" && zip -q -X "$OUT/merged.apk" AndroidManifest.xml resources.arsc res/*)
+(cd "$OUT/newres" && zip -q -X -0 "$OUT/merged.apk" resources.arsc)
+(cd "$OUT/newres" && zip -q -X "$OUT/merged.apk" AndroidManifest.xml res/*)
 (cd "$OUT/dex" && zip -q -X "$OUT/merged.apk" classes.dex)
 mkdir -p "$OUT/pkgassets/assets"
 cp -r termux "$OUT/pkgassets/assets/"
