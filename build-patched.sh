@@ -34,7 +34,9 @@ zip -q -d "$OUT/merged.apk" 'res/*' 'AndroidManifest.xml' 'resources.arsc' 'clas
 (cd "$OUT/newres" && unzip -q -o "$OUT/base.apk" 'AndroidManifest.xml' 'resources.arsc' 'res/*')
 (cd "$OUT/newres" && zip -q -X "$OUT/merged.apk" AndroidManifest.xml resources.arsc res/*)
 (cd "$OUT/dex" && zip -q -X "$OUT/merged.apk" classes.dex)
-(cd "$SRC" && zip -q -X "$OUT/merged.apk" assets/termux/buddy-run assets/termux/system-prompt.md \
+mkdir -p "$OUT/pkgassets/assets"
+cp -r termux "$OUT/pkgassets/assets/"
+(cd "$OUT/pkgassets" && zip -q -X "$OUT/merged.apk" assets/termux/buddy-run assets/termux/system-prompt.md \
   assets/termux/android-app/SKILL.md assets/termux/service-launch.sh)
 
 echo "5/7 对齐"

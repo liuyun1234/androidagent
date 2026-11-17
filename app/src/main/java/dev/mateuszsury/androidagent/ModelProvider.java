@@ -69,6 +69,14 @@ final class ModelProvider {
      * 其余配置（登录、MCP、审批策略）保持不变。
      */
     static String apply(Context c, JSONObject o) throws IOException {
+        String id = o.optString("id", "custom");
+        if (!id.matches("[A-Za-z0-9_-]+")) {
+            throw new IllegalArgumentException("供应商标识只能是字母、数字、下划线或连字符");
+        }
+        String envKey = o.optString("env_key", "");
+        if (!envKey.isEmpty() && !envKey.matches("[A-Za-z_][A-Za-z0-9_]*")) {
+            throw new IllegalArgumentException("环境变量名只能是字母、数字和下划线，且以字母或下划线开头");
+        }
         save(c, o);
         writeConfig(c, o);
         writeEnv(c, o.optString("env_key", ""), o.optString("api_key", ""));
@@ -100,6 +108,8 @@ final class ModelProvider {
                 String t = line.trim();
                 if (t.startsWith("[")) {
                     inProviders = t.startsWith("[model_providers.");
+                    if (inProviders) continue;
+                    sb.append(line).append('\n');
                     continue;
                 }
                 if (inProviders) continue;
@@ -128,7 +138,10 @@ final class ModelProvider {
         StringBuilder sb = new StringBuilder();
         sb.append("# 由 androidagent 的模型设置写入；供 buddy-run 加载供应商密钥。\n");
         if (key != null && !key.isEmpty() && value != null && !value.isEmpty()) {
-            sb.append("export ").append(key.trim()).append("=\"").append(value.replace("\\", "\\\\").replace("\"", "\\\"")).append("\"\n");
+            if (!key.matches("[A-Za-z_][A-Za-z0-9_]*")) {
+                throw new IllegalArgumentException("环境变量名无效：" + key);
+            }
+            sb.append("export ").append(key).append("='").append(value.replace("'", "'\\''")).append("'\n");
         }
         write(f, sb.toString());
     }
