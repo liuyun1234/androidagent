@@ -24,7 +24,7 @@ W=$D/work
 mkdir -p "$W" "$D/sessions"
 TOKEN=${1:-}
 CMD=${2:-}
-URL=http://127.0.0.1:8766
+URL=http://127.0.0.1:${ANDROIDAGENT_MCP_PORT:-8766}
 
 post() { # post one JSON event to the bubble
   curl -s -m 5 -o /dev/null -X POST -H "Authorization: Bearer $TOKEN" \

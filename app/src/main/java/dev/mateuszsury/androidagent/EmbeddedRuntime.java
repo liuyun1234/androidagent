@@ -230,6 +230,7 @@ final class EmbeddedRuntime {
         env.put("HOME",HOME);env.put("PREFIX",PREFIX);env.put("PATH",HOME+"/bin:"+PREFIX+"/bin:/system/bin");env.put("TMPDIR",PREFIX+"/tmp");env.put("SHELL",PREFIX+"/bin/bash");env.put("TERM","xterm-256color");env.put("LANG","C.UTF-8");
         env.put("SSL_CERT_FILE",PREFIX+"/etc/tls/cert.pem");env.put("SSL_CERT_DIR",PREFIX+"/etc/tls/certs");env.put("DISABLE_AUTOUPDATER","1");env.put("ANDROIDAGENT_EMBEDDED","1");env.put("TERMUX_EXEC__SYSTEM_LINKER_EXEC__MODE","disable");
         env.put("ANDROID__BUILD_VERSION_SDK",Integer.toString(Build.VERSION.SDK_INT));env.put("TERMUX__UID",Integer.toString(android.os.Process.myUid()));
+        env.put("ANDROIDAGENT_MCP_PORT",Integer.toString(McpServer.portFor(app)));
         return pb;
     }
     private synchronized void refreshDns(File file)throws IOException{

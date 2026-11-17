@@ -19,7 +19,7 @@ final class McpHost implements McpServer.Handler {
     private volatile long revokedUntil;
     private volatile boolean stopping;
     private McpHost(Context c){app=c;}
-    synchronized void acquire(Object owner){owners.add(owner);if(server==null){server=new McpServer(Prefs.token(app),this);server.start();}}
+    synchronized void acquire(Object owner){owners.add(owner);if(server==null){server=new McpServer(Prefs.token(app),this,McpServer.portFor(app));server.start();}}
     synchronized void release(Object owner){owners.remove(owner);if(owners.isEmpty()&&runs.isEmpty()&&server!=null){server.stop();server=null;}}
     String credential(String chat){
         String owner="chat:"+chat,token=UUID.randomUUID().toString()+UUID.randomUUID();
